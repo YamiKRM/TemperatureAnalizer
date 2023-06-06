@@ -1,4 +1,5 @@
 #include <iostream>
+#include <thread>
 
 #include "Requests.h"
 
@@ -26,7 +27,8 @@ http::Response requests::get_request(const char* url, HEADERS& headers)
     catch (const std::exception& e)
     {
 
-        std::cerr << "Request failed, error: " << e.what() << '\n';
+        //std::cerr << "Request failed, error: " << e.what() << '\n';
+        throw e.what();
 
     }
 
@@ -54,7 +56,8 @@ http::Response requests::post_request(const char* url, HEADERS& headers)
     catch (const std::exception& e)
     {
 
-        std::cerr << "Request failed, error: " << e.what() << '\n';
+        //std::cerr << "Request failed, error: " << e.what() << '\n';
+        throw e.what();
 
     }
 
@@ -109,6 +112,20 @@ void requests::get_response_value(const http::Response& response, BuffReader* re
     //Pass the buffer to the buffer reader class
 
     reader->change_buff(buffer_start, buffer_length);
+
+
+}
+
+std::string requests::request_token(BuffReader* reader)
+{
+
+    HEADERS token_headers = { { "x-ubidots-apikey", API_KEY } };
+
+    auto response = post_request(API_TOKEN_REQUEST, token_headers);
+
+    requests::get_response_value(response, reader);
+
+   return reader->read_buff_value();
 
 
 }

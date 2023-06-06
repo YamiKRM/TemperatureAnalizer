@@ -25,6 +25,8 @@ namespace requests
 
 	http::Response post_request(const char* url, HEADERS &headers);
 
+	std::string request_token(BuffReader* reader);
+
 	void get_response_value(const http::Response& response, BuffReader* reader);
 
 }
