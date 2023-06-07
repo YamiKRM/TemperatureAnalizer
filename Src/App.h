@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <thread>
+#include <ctime>
 
 #include "Requests.h"
 
@@ -16,6 +17,9 @@
 
 constexpr const char* config_path = "Config.ini";
 
+#define DEFAULT_LOW_TEMPERATURE 99.f
+#define DEFAULT_HIGH_TEMPERATURE -1.0f
+
 namespace app
 {
 
@@ -26,7 +30,16 @@ namespace app
 		float min_temperature = 0.0f;
 		float max_temperature = 0.0f;
 
+		float lowest_temperature = DEFAULT_LOW_TEMPERATURE;
+		float highest_temperature = DEFAULT_HIGH_TEMPERATURE;
+
+		float* plot_temperature = NULL;
+
 		std::string sound_path = "";
+
+
+		//char* lowest_t_date = NULL;
+		//char* highest_t_date = NULL;
 
 		bool app_finished = false;
 		bool use_alarm = false;

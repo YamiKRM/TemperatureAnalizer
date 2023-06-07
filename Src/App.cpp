@@ -112,12 +112,14 @@ void app::loop(ARGS* args)
 
     using namespace std::literals::chrono_literals;
 
-    if (args == NULL)
+    if (args == NULL || args->plot_temperature == NULL)
     {
         throw "Invalid argument value";
     }
 
     BuffReader reader(NULL, 0);
+
+    uint8_t i = 0;
 
     while (!args->app_finished)
     {
@@ -126,7 +128,22 @@ void app::loop(ARGS* args)
 
         perform_requests(args, &reader);
 
-        //Perform the temperature checks
+        //Update the temperature values to plot
+        args->plot_temperature[i] = args->temperature;
+
+        i = (i < 100) ? i + 1 : 0;
+
+        //Update the lowest and highest temperature
+
+        if (args->temperature < args->lowest_temperature)
+            args->lowest_temperature = args->temperature;
+                  
+
+        if (args->temperature > args->highest_temperature)
+            args->highest_temperature = args->temperature;
+
+       
+        //Perform the temperature checks for sounding the alarm
 
         if (args->max_temperature != 0 && args->temperature > args->max_temperature)
         {
@@ -137,11 +154,8 @@ void app::loop(ARGS* args)
         }
 
         if (args->min_temperature != 0 && args->temperature < args->min_temperature)
-        {
             app::sound_alarm(args);
-            continue;
 
-        }
 
     }
 

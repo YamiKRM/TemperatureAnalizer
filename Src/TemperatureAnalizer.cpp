@@ -10,8 +10,7 @@
 #define WIDTH 800
 #define HEIGHT 600
 
-///TODO:
-/// - Register the lowest and highest temperature
+#define YELLOW ImVec4(1, 1, 0, 1)
 
 int main()
 {
@@ -51,7 +50,16 @@ int main()
 
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+    bool show_temperature = true;
+    bool show_analysis = false;
     bool show_config = false;
+
+    float tmp_array[100];
+    
+    for (uint8_t i = 0; i < 100; i++)
+        tmp_array[i] = 0;
+
+    args.plot_temperature = tmp_array;
 
     //Start requesting the temperature continously on another thread.
 
@@ -68,6 +76,7 @@ int main()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        //Shows the main menu bar below the window name
         if (ImGui::BeginMainMenuBar())
         {
 
@@ -76,6 +85,19 @@ int main()
 
                 if (ImGui::MenuItem("Salir"))
                     break;
+
+                ImGui::EndMenu();
+
+            }
+
+            if (ImGui::BeginMenu("Vista"))
+            {
+
+                if (ImGui::MenuItem("Medidor"))
+                    show_temperature = true;
+
+                if (ImGui::MenuItem("Analisis"))
+                    show_analysis = true;
 
                 ImGui::EndMenu();
 
@@ -95,12 +117,16 @@ int main()
 
         }
 
-        //Main Window layout.
-        ImGui::Begin("Medidor de temperatura", NULL, ImGuiWindowFlags_NoResize);
+        if (show_temperature)
+        {
 
-        ImGui::TextColored(ImVec4(1, 1, 0, 1), ("Temperatura actual: " + std::to_string(args.temperature) + " C").c_str());
+            ImGui::Begin("Medidor de temperatura", &show_temperature, ImGuiWindowFlags_NoResize);
 
-        ImGui::End();
+            ImGui::TextColored(YELLOW, ("Temperatura actual: " + std::to_string(args.temperature) + " C").c_str());
+
+            ImGui::End();
+
+        }
 
         if (show_config)
         {
@@ -139,6 +165,32 @@ int main()
                 ImGui::EndChild();
 
             }
+
+            ImGui::End();
+
+        }
+
+        if (show_analysis)
+        {
+
+            ImGui::Begin("Analisis de temperatura", &show_analysis, ImGuiWindowFlags_NoResize);
+            
+            ImGui::Text("Los siguientes datos son con respecto a la sesion actual.");
+
+            if (args.lowest_temperature == DEFAULT_LOW_TEMPERATURE)
+                ImGui::TextColored(YELLOW, "Temperatura mas baja: 0");
+
+            else
+                ImGui::TextColored(YELLOW, ("Temperatura mas baja: " + std::to_string(args.lowest_temperature)).c_str());
+
+            
+            if (args.highest_temperature == DEFAULT_HIGH_TEMPERATURE)
+                ImGui::TextColored(YELLOW, "Temperatura mas alta: 0");
+
+            else
+                ImGui::TextColored(YELLOW, ("Temperatura mas alta: " + std::to_string(args.highest_temperature)).c_str());
+
+            ImGui::PlotLines("Temperatura", tmp_array, 100, 0, NULL, FLT_MIN, FLT_MAX, ImVec2(200, 50));
 
             ImGui::End();
 
