@@ -16,7 +16,7 @@
 
 #pragma endregion
 
-constexpr char* token = "BBFF-cLSzBm5VcnThK32Zf67FswacdWbqtv";
+constexpr char* token = ""; //Your token goes here
 
 DHTesp dht;
 float temperature = 0;
