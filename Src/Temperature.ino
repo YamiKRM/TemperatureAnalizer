@@ -5,8 +5,8 @@
 
 #pragma region DEFINES
 
-#define SSID "CLARO_WIFIA13"
-#define PASSWORD "CLAROIAC6"
+#define SSID "" //Your SSID goes here
+#define PASSWORD "" //Your WiFi password goes here
 
 #define DEVICE_LABEL "esp"
 #define DEVICE_NAME "ESP"
